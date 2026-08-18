@@ -1,0 +1,15 @@
+fastapi==0.115.12
+uvicorn[standard]==0.34.2
+websockets==15.0.1
+python-multipart==0.0.20
+
+# Phase 2 — NLP / Entity Extraction
+spacy==3.8.13
+# med7 model wheel — download manually from HuggingFace and install with:
+#   curl -L -o en_core_med7_lg-1.1.0-py3-none-any.whl https://huggingface.co/kormilitzin/en_core_med7_lg/resolve/main/en_core_med7_lg-any-py3-none-any.whl
+#   pip install en_core_med7_lg-1.1.0-py3-none-any.whl --no-deps
+# General English model: python -m spacy download en_core_web_sm
+pytest==9.1.1
+
+# Phase 3 — LLM Structuring
+requests==2.32.3

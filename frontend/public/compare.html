@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ClinDoc AI vs Nuance DAX / Abridge — SIH 2026</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:        #0a0e1a;
+      --bg2:       #111827;
+      --card:      #1a1f35;
+      --elevated:  #252b45;
+      --border:    rgba(99,115,171,0.18);
+      --accent:    #06b6d4;
+      --accent2:   #3b82f6;
+      --green:     #10b981;
+      --amber:     #f59e0b;
+      --red:       #ef4444;
+      --text:      #e8ecf4;
+      --muted:     #94a3c0;
+      --dim:       #5e6b85;
+      --font:      'Inter', system-ui, sans-serif;
+      --radius:    12px;
+    }
+
+    html { font-family: var(--font); background: var(--bg); color: var(--text); min-height: 100vh; }
+
+    /* ── Layout ── */
+    body { max-width: 1100px; margin: 0 auto; padding: 48px 24px 80px; }
+
+    /* ── Header ── */
+    .slide-header { text-align: center; margin-bottom: 56px; }
+    .slide-header__eyebrow {
+      display: inline-block;
+      font-size: 11px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase;
+      color: var(--accent); background: rgba(6,182,212,.1);
+      border: 1px solid rgba(6,182,212,.25); border-radius: 100px;
+      padding: 4px 14px; margin-bottom: 18px;
+    }
+    .slide-header__title {
+      font-size: clamp(28px,4vw,48px); font-weight: 800; line-height: 1.15;
+      background: linear-gradient(135deg,#e8ecf4 30%,#94a3c0);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text; margin-bottom: 16px;
+    }
+    .slide-header__sub {
+      font-size: 15px; color: var(--muted); max-width: 600px; margin: 0 auto; line-height: 1.6;
+    }
+
+    /* ── Summary cards row ── */
+    .summary-row {
+      display: grid; grid-template-columns: repeat(3,1fr); gap: 16px;
+      margin-bottom: 48px;
+    }
+    .summary-card {
+      background: var(--card); border: 1px solid var(--border); border-radius: var(--radius);
+      padding: 22px 20px; text-align: center;
+    }
+    .summary-card__icon { font-size: 28px; margin-bottom: 10px; display: block; }
+    .summary-card__name { font-size: 13px; font-weight: 700; margin-bottom: 6px; }
+    .summary-card__tag  {
+      display: inline-block; font-size: 11px; font-weight: 600; letter-spacing: .08em;
+      text-transform: uppercase; padding: 3px 10px; border-radius: 100px;
+    }
+    .tag--us    { background: rgba(239,68,68,.12); color: #f87171; border: 1px solid rgba(239,68,68,.2); }
+    .tag--us2   { background: rgba(245,158,11,.12); color: #fbbf24; border: 1px solid rgba(245,158,11,.2); }
+    .tag--india { background: rgba(16,185,129,.12); color: #34d399; border: 1px solid rgba(16,185,129,.2); }
+    .summary-card__desc { font-size: 12px; color: var(--dim); margin-top: 8px; line-height: 1.5; }
+
+    /* ── Comparison table ── */
+    .compare-section { margin-bottom: 48px; }
+    .compare-section__title {
+      font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: .1em;
+      color: var(--accent); margin-bottom: 16px;
+    }
+
+    table { width: 100%; border-collapse: collapse; }
+    thead th {
+      background: var(--elevated); border: 1px solid var(--border);
+      padding: 12px 16px; font-size: 12px; font-weight: 700; text-align: left;
+      text-transform: uppercase; letter-spacing: .07em; color: var(--muted);
+    }
+    thead th:first-child { width: 22%; border-radius: var(--radius) 0 0 0; }
+    thead th:last-child  { border-radius: 0 var(--radius) 0 0; }
+    tbody td {
+      background: var(--card); border: 1px solid var(--border);
+      padding: 13px 16px; font-size: 13px; vertical-align: top; line-height: 1.6;
+    }
+    tbody tr:hover td { background: var(--elevated); }
+    tbody td:first-child { color: var(--muted); font-weight: 600; font-size: 12px; }
+
+    /* ── Cell chips ── */
+    .chip {
+      display: inline-flex; align-items: center; gap: 5px;
+      font-size: 11px; font-weight: 600; padding: 2px 9px; border-radius: 100px;
+    }
+    .chip--yes  { background: rgba(16,185,129,.12);  color: #34d399; border: 1px solid rgba(16,185,129,.2); }
+    .chip--no   { background: rgba(239,68,68,.12);   color: #f87171; border: 1px solid rgba(239,68,68,.2); }
+    .chip--part { background: rgba(245,158,11,.12);  color: #fbbf24; border: 1px solid rgba(245,158,11,.2); }
+
+    /* ── Four-layer architecture ── */
+    .arch-section { margin-bottom: 48px; }
+    .arch-section__title {
+      font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: .1em;
+      color: var(--accent); margin-bottom: 20px;
+    }
+    .arch-grid {
+      display: grid; grid-template-columns: repeat(4,1fr); gap: 12px;
+    }
+    .arch-card {
+      background: var(--card); border: 1px solid var(--border); border-radius: var(--radius);
+      padding: 20px 16px; position: relative; overflow: hidden;
+    }
+    .arch-card::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+    }
+    .arch-card__num  { font-size: 11px; font-weight: 700; color: var(--accent); margin-bottom: 6px; }
+    .arch-card__name { font-size: 14px; font-weight: 700; margin-bottom: 8px; }
+    .arch-card__tech {
+      font-size: 11px; color: var(--dim); background: var(--elevated);
+      padding: 4px 8px; border-radius: 6px; margin-bottom: 10px; display: inline-block;
+    }
+    .arch-card__body { font-size: 12px; color: var(--muted); line-height: 1.6; }
+
+    /* ── Differentiators ── */
+    .diff-section { margin-bottom: 48px; }
+    .diff-section__title {
+      font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: .1em;
+      color: var(--accent); margin-bottom: 20px;
+    }
+    .diff-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 16px; }
+    .diff-card {
+      background: var(--card); border: 1px solid var(--border); border-radius: var(--radius);
+      padding: 20px 18px;
+    }
+    .diff-card__icon  { font-size: 22px; margin-bottom: 10px; display: block; }
+    .diff-card__title { font-size: 14px; font-weight: 700; margin-bottom: 6px; }
+    .diff-card__body  { font-size: 12px; color: var(--muted); line-height: 1.6; }
+
+    /* ── Footer ── */
+    .slide-footer {
+      text-align: center; margin-top: 56px; padding-top: 24px;
+      border-top: 1px solid var(--border);
+      font-size: 12px; color: var(--dim);
+    }
+    .slide-footer a { color: var(--accent); text-decoration: none; }
+
+    @media (max-width: 700px) {
+      .summary-row, .arch-grid, .diff-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ══ HEADER ══════════════════════════════════════════════════════════════ -->
+  <header class="slide-header">
+    <span class="slide-header__eyebrow">SIH 2026 — PS #43 — Competitive Positioning</span>
+    <h1 class="slide-header__title">ClinDoc AI vs. Nuance DAX &amp; Abridge</h1>
+    <p class="slide-header__sub">
+      Same four-layer pipeline shape as enterprise leaders — purpose-built for
+      multilingual Indian clinical settings, with the physician always in the loop.
+    </p>
+  </header>
+
+  <!-- ══ PRODUCT SUMMARY ═════════════════════════════════════════════════════ -->
+  <section class="compare-section">
+    <h2 class="compare-section__title">Products at a Glance</h2>
+    <div class="summary-row">
+      <div class="summary-card">
+        <span class="summary-card__icon">🏢</span>
+        <div class="summary-card__name">Nuance DAX Copilot</div>
+        <span class="summary-card__tag tag--us">US / Global Enterprise</span>
+        <p class="summary-card__desc">Microsoft-backed ambient AI. Dragon Medical ecosystem. Deep EHR integrations (Epic, Cerner). $$$$ SaaS. English-primary.</p>
+      </div>
+      <div class="summary-card">
+        <span class="summary-card__icon">🏢</span>
+        <div class="summary-card__name">Abridge</div>
+        <span class="summary-card__tag tag--us2">US Health Systems</span>
+        <p class="summary-card__desc">Real-time diarisation + GPT-4 summarisation. Used in UPMC, Epic App Orchard. Closed, cloud-only. Limited language support.</p>
+      </div>
+      <div class="summary-card">
+        <span class="summary-card__icon">🇮🇳</span>
+        <div class="summary-card__name">ClinDoc AI</div>
+        <span class="summary-card__tag tag--india">India-First · Open Architecture</span>
+        <p class="summary-card__desc">SIH 2026 prototype. Multilingual (EN/HI/TA). Local-LLM, air-gap capable. Physician-in-the-loop editing. FHIR R4 export.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ FEATURE COMPARISON TABLE ═══════════════════════════════════════════ -->
+  <section class="compare-section">
+    <h2 class="compare-section__title">Feature Comparison</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Dimension</th>
+          <th>Nuance DAX</th>
+          <th>Abridge</th>
+          <th>ClinDoc AI</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Ambient ASR</td>
+          <td>✅ Dragon Medical Neural (cloud)</td>
+          <td>✅ Proprietary (cloud)</td>
+          <td><span class="chip chip--part">⟳ Whisper.cpp (Phase 1, planned)</span></td>
+        </tr>
+        <tr>
+          <td>Multilingual</td>
+          <td><span class="chip chip--no">✗ English-primary</span></td>
+          <td><span class="chip chip--no">✗ English-primary</span></td>
+          <td><span class="chip chip--yes">✓ EN / HI / TA pipeline</span></td>
+        </tr>
+        <tr>
+          <td>Indian Clinical Context</td>
+          <td><span class="chip chip--no">✗ US-tuned vocabulary</span></td>
+          <td><span class="chip chip--no">✗ US-tuned vocabulary</span></td>
+          <td><span class="chip chip--yes">✓ Indian drug names, ICD-10, med7</span></td>
+        </tr>
+        <tr>
+          <td>Medical NER</td>
+          <td>✅ Proprietary NLP</td>
+          <td>✅ GPT-4 function calls</td>
+          <td><span class="chip chip--yes">✓ med7 + spaCy PhraseMatcher</span></td>
+        </tr>
+        <tr>
+          <td>Note Types</td>
+          <td>SOAP + Progress</td>
+          <td>SOAP + Discharge</td>
+          <td><span class="chip chip--yes">✓ Consultation · Discharge · Prescription</span></td>
+        </tr>
+        <tr>
+          <td>Physician Editing</td>
+          <td><span class="chip chip--part">⟳ Post-generation edit (EHR UI)</span></td>
+          <td><span class="chip chip--part">⟳ Post-generation edit</span></td>
+          <td><span class="chip chip--yes">✓ Inline contentEditable, every field</span></td>
+        </tr>
+        <tr>
+          <td>LLM / AI Model</td>
+          <td>GPT-4 (Azure OpenAI)</td>
+          <td>GPT-4 (OpenAI)</td>
+          <td><span class="chip chip--yes">✓ Local Ollama (qwen3:30b) — air-gap safe</span></td>
+        </tr>
+        <tr>
+          <td>Data Privacy</td>
+          <td>BAA required; cloud PHI</td>
+          <td>BAA required; cloud PHI</td>
+          <td><span class="chip chip--yes">✓ 100% on-premise, no PHI egress</span></td>
+        </tr>
+        <tr>
+          <td>FHIR Export</td>
+          <td><span class="chip chip--part">⟳ Via EHR integration</span></td>
+          <td><span class="chip chip--part">⟳ Via Epic SMART on FHIR</span></td>
+          <td><span class="chip chip--yes">✓ Native FHIR R4 Bundle download</span></td>
+        </tr>
+        <tr>
+          <td>Cost Model</td>
+          <td>$$$$ per provider / month</td>
+          <td>$$$ per provider / month</td>
+          <td><span class="chip chip--yes">✓ Open-source stack, self-hosted</span></td>
+        </tr>
+        <tr>
+          <td>Deployment</td>
+          <td>Cloud-only (Azure)</td>
+          <td>Cloud-only (AWS)</td>
+          <td><span class="chip chip--yes">✓ Local / hospital intranet / cloud</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- ══ FOUR-LAYER ARCHITECTURE ════════════════════════════════════════════ -->
+  <section class="arch-section">
+    <h2 class="arch-section__title">Same Four-Layer Shape — Different Focus</h2>
+    <div class="arch-grid">
+      <div class="arch-card">
+        <div class="arch-card__num">LAYER 1</div>
+        <div class="arch-card__name">Speech-to-Text</div>
+        <span class="arch-card__tech">Whisper / Dragon / Proprietary</span>
+        <div class="arch-card__body">
+          All four products start with ambient ASR. DAX and Abridge use proprietary cloud models;
+          ClinDoc targets <strong>Whisper.cpp</strong> (Phase 1) — local, no-internet, tunable on Indian accents.
+        </div>
+      </div>
+      <div class="arch-card">
+        <div class="arch-card__num">LAYER 2</div>
+        <div class="arch-card__name">Entity Extraction</div>
+        <span class="arch-card__tech">med7 · spaCy · PhraseMatcher</span>
+        <div class="arch-card__body">
+          Structured NER pulls <em>symptoms, diagnoses, medications</em> before the LLM sees the text.
+          ClinDoc uses <strong>med7</strong> (clinical NER) + rule-based fallback — no hallucinations from the LLM on drug names.
+        </div>
+      </div>
+      <div class="arch-card">
+        <div class="arch-card__num">LAYER 3</div>
+        <div class="arch-card__name">LLM Structuring</div>
+        <span class="arch-card__tech">qwen3:30b · Ollama · Pydantic</span>
+        <div class="arch-card__body">
+          One prompt per note type, Pydantic schema validation, 1 auto-retry on malformed JSON.
+          The LLM only arranges <em>given facts</em> — it cannot fabricate. Local model means zero API cost and full PHI control.
+        </div>
+      </div>
+      <div class="arch-card">
+        <div class="arch-card__num">LAYER 4</div>
+        <div class="arch-card__name">Review &amp; Export</div>
+        <span class="arch-card__tech">contentEditable · FHIR R4</span>
+        <div class="arch-card__body">
+          Every field is inline-editable by the physician <em>before</em> export. Edits flow into the FHIR
+          Bundle (Composition + MedicationRequest + Condition) — physician-in-the-loop is a design constraint, not an afterthought.
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ DIFFERENTIATORS ════════════════════════════════════════════════════ -->
+  <section class="diff-section">
+    <h2 class="diff-section__title">Why ClinDoc AI for India</h2>
+    <div class="diff-grid">
+      <div class="diff-card">
+        <span class="diff-card__icon">🌐</span>
+        <div class="diff-card__title">Multilingual by Architecture</div>
+        <div class="diff-card__body">
+          Translation normalization layer (stub → Ollama translate → English) sits between ASR and NER.
+          Hindi and Tamil clinical conversations flow through the same pipeline without retraining NER or the LLM prompt.
+        </div>
+      </div>
+      <div class="diff-card">
+        <span class="diff-card__icon">🔒</span>
+        <div class="diff-card__title">Air-Gap Safe</div>
+        <div class="diff-card__body">
+          Ollama runs entirely on-premise. No patient data leaves the hospital network — critical for
+          ABDM / DPDPA compliance. Hospitals in Tier-2/3 cities with unreliable internet can still run the full pipeline.
+        </div>
+      </div>
+      <div class="diff-card">
+        <span class="diff-card__icon">👨‍⚕️</span>
+        <div class="diff-card__title">Physician-in-the-Loop</div>
+        <div class="diff-card__body">
+          Inline contentEditable on every field — the doctor reads, corrects, then exports. Edits are
+          captured in the FHIR Bundle before any record is finalised. The AI proposes; the physician decides.
+        </div>
+      </div>
+      <div class="diff-card">
+        <span class="diff-card__icon">💰</span>
+        <div class="diff-card__title">Zero Recurring Cost</div>
+        <div class="diff-card__body">
+          Fully open-source stack: FastAPI · spaCy · Ollama · React · Vite.
+          No per-seat SaaS fees, no Azure/AWS billing for PHI processing. Deployable on commodity hospital hardware.
+        </div>
+      </div>
+      <div class="diff-card">
+        <span class="diff-card__icon">📋</span>
+        <div class="diff-card__title">Three Note Templates</div>
+        <div class="diff-card__body">
+          Consultation (SOAP), Discharge Summary, and Prescription — all three output types named in
+          PS #43. Each has a dedicated Pydantic-validated JSON schema; the LLM never invents field names.
+        </div>
+      </div>
+      <div class="diff-card">
+        <span class="diff-card__icon">🧬</span>
+        <div class="diff-card__title">FHIR R4 Native Export</div>
+        <div class="diff-card__body">
+          Exports a standards-compliant Bundle (Patient + Composition + MedicationRequest + Condition)
+          ready for integration with ABDM Health Records or any FHIR-compatible EHR without middleware.
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ FOOTER ═════════════════════════════════════════════════════════════ -->
+  <footer class="slide-footer">
+    <p>
+      ClinDoc AI — Smart India Hackathon 2026 · PS #43 ·
+      <a href="/" target="_blank">Back to App</a>
+    </p>
+    <p style="margin-top:8px">
+      Sources: Nuance DAX Copilot product page · Abridge.com · HL7 FHIR R4 · ABDM Health Records spec
+    </p>
+  </footer>
+
+</body>
+</html>
